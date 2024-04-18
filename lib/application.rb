@@ -13,10 +13,10 @@ class Application
      game = Game.new(board)
      show = Show.new
      while game.status == "on going"
-       show.show_board(board)
+      show.show_board(board)
        game.play_turn
-       game.switch_player
-     end
+     end  
+     show.show_board(board)
      game.game_end
   end
 end

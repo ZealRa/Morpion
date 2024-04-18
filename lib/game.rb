@@ -18,13 +18,6 @@ class Game
         @turns_played = 0
     end
 
-    def new_games
-        Board.reset
-        @current_player = @players.first
-        @status = "on going"
-        play_turn
-      end
-
     def free_position?(position)
         @board.board_cases[position].value == " "
     end
@@ -36,35 +29,7 @@ class Game
     def switch_player
         @current_player = @current_player == @players.first ? @players.last : @players.first
     end
-    
-    # def victory?
-    #     winning_combinations = [
-      
-    #       %w[A1 B1 C1], %w[A2 B2 C2], %w[A3 B3 C3],
- 
-    #       %w[A1 A2 A3], %w[B1 B2 B3], %w[C1 C2 C3],
 
-    #       %w[A1 B2 C3], %w[A3 B2 C1]
-    #     ]
-      
-    #     winning_combinations.each do |combination|
-    #         if
-    #             combination.map { |pos| @board.board_cases[pos].value }.uniq.length == 1 &&
-    #             !@board.board_cases[combination[0]].value.empty?
-    #             return true
-    #         end
-    #     end
-    #     return false
-      
-    #     if @board.turns_played == 9
-    #       puts "It's a draw!"
-    #       return true
-    #     end
-      
-    #     false
-    # end
-
-    
       
  def victory?
     winning_combinations = [
@@ -79,7 +44,11 @@ class Game
         return true
       end
     end
-  
+    if @turns_played == 8
+        @status == "draw"
+        puts "C'est une égalité !"
+        return true
+    end
     false
  end
 
@@ -111,16 +80,13 @@ class Game
     end
 
     def game_end
-      if @status == "draw"
-        puts "La partie est terminée. C'est un match nul !"
-      else
-        puts "La partie est terminée. Le joueur #{current_player.name} a gagné !"
+      if victory?
+        puts "La partie est terminée. Le joueur #{current_player} a gagné !"
       end
-  
       puts "Voulez-vous jouer une nouvelle partie ? (Oui/Non)"
       answer = gets.chomp.downcase
       if answer == "oui"
-        new_games
+        Application.new.perform
       else
         puts "Merci d'avoir joué ! Au revoir !"
       end
