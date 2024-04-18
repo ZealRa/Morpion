@@ -7,11 +7,15 @@ require 'board'
 require 'game'
 require 'player'
 require 'show.rb' 
+require 'application.rb'
 
-game = Game.new
-game.play_turn
-show = Show.new
-show.show_board(board)
+# board = Board.new
+# game = Game.new(board)
+# game.play_turn
+# show = Show.new
+# #board = Board.new
+# show.show_board(board)
 
 
-#Application.new.perform
+Application.new.perform
+
