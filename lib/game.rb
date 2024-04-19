@@ -1,30 +1,17 @@
 require 'bundler'
 Bundler.require
-require_relative '/home/zealra/THP/semaine_4/morpion/lib/board.rb'
+require_relative 'board.rb'
 
 class Game 
     attr_accessor :current_player, :status, :players, :board, :turns_played
 
     def initialize(board)
-        puts "\n\n"
-        puts <<-ASCII   
-
-
-        ██╗    ██╗███████╗██╗      ██████╗ ██████╗ ███╗   ███╗███████╗    ██╗███╗   ██╗    ████████╗██╗ ██████╗    ████████╗ █████╗  ██████╗    ████████╗ ██████╗ ███████╗
-        ██║    ██║██╔════╝██║     ██╔════╝██╔═══██╗████╗ ████║██╔════╝    ██║████╗  ██║    ╚══██╔══╝██║██╔════╝    ╚══██╔══╝██╔══██╗██╔════╝    ╚══██╔══╝██╔═══██╗██╔════╝
-        ██║ █╗ ██║█████╗  ██║     ██║     ██║   ██║██╔████╔██║█████╗      ██║██╔██╗ ██║       ██║   ██║██║            ██║   ███████║██║            ██║   ██║   ██║█████╗  
-        ██║███╗██║██╔══╝  ██║     ██║     ██║   ██║██║╚██╔╝██║██╔══╝      ██║██║╚██╗██║       ██║   ██║██║            ██║   ██╔══██║██║            ██║   ██║   ██║██╔══╝  
-        ╚███╔███╔╝███████╗███████╗╚██████╗╚██████╔╝██║ ╚═╝ ██║███████╗    ██║██║ ╚████║       ██║   ██║╚██████╗       ██║   ██║  ██║╚██████╗       ██║   ╚██████╔╝███████╗
-         ╚══╝╚══╝ ╚══════╝╚══════╝ ╚═════╝ ╚═════╝ ╚═╝     ╚═╝╚══════╝    ╚═╝╚═╝  ╚═══╝       ╚═╝   ╚═╝ ╚═════╝       ╚═╝   ╚═╝  ╚═╝ ╚═════╝       ╚═╝    ╚═════╝ ╚══════╝
-           
-           ASCII
-        puts "\n\n"
+        puts "Bienvenue dans le jeu !"
         print "Joueur 1, veuillez entrer votre prénom : "
-        @players = []
-        @players = [Player.new(gets, "X")]
+        player1_name = gets.chomp
         print "Joueur 2, veuillez entrer votre prénom : "
-        @players = [Player.new(gets.chomp, "O")]
-        @current_player = @players.first
+        player2_name = gets.chomp
+        @players = [Player.new(player1_name, "X"), Player.new(player2_name, "O")]
         @status = "on going"
         @board = board
         @turns_played = 0
@@ -36,10 +23,6 @@ class Game
     
     def fill_position(position, symbol)
         @board.board_cases[position].value = symbol
-    end
-    
-    def switch_player
-        @current_player = @current_player == @players.first ? @players.last : @players.first
     end
 
       
@@ -75,29 +58,22 @@ class Game
         puts "Saisis une case (e.g., A1, B2, C3):"
         position = gets.chomp.upcase
         
-        unless position.match?(/\A[ABC][1-3]\z/)
-        puts "Erreur : Entrée invalide. Veuillez entrer une case valide (e.g., A1, B2, C3)."
-        play_turn
-        end
-        
-        unless free_position?(position)
-          puts "La case est déjà occupée, veuillez réessayer"
-          play_turn
-        end
-    
-        fill_position(position, @current_player.symbol)
-    
-        if victory?
-          @status = @current_player
+        if position.match?(/\A[ABC][1-3]\z/)
+            if free_position?(position)
+                fill_position(position, @current_player.symbol)
+            else
+                puts "La case est déjà occupée, veuillez réessayer"
+                play_turn
+            end
         else
-          switch_player
+            puts "Erreur : Entrée invalide. Veuillez entrer une case valide (e.g., A1, B2, C3)."
+            play_turn
         end
-        @turns_played += 1 
     end
 
     def game_end
       if victory?
-        puts "La partie est terminée. Le joueur #{current_player} a gagné !"
+        puts "La partie est terminée. Le joueur #{current_player.name} a gagné !"
       end
       puts "Voulez-vous jouer une nouvelle partie ? (Oui/Non)"
       answer = gets.chomp.downcase
