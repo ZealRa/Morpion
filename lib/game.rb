@@ -6,12 +6,24 @@ class Game
     attr_accessor :current_player, :status, :players, :board, :turns_played
 
     def initialize(board)
-        puts "Bienvenue dans le jeu !"
+        puts "\n\n"
+        puts <<-ASCII   
+
+
+        ██╗    ██╗███████╗██╗      ██████╗ ██████╗ ███╗   ███╗███████╗    ██╗███╗   ██╗    ████████╗██╗ ██████╗    ████████╗ █████╗  ██████╗    ████████╗ ██████╗ ███████╗
+        ██║    ██║██╔════╝██║     ██╔════╝██╔═══██╗████╗ ████║██╔════╝    ██║████╗  ██║    ╚══██╔══╝██║██╔════╝    ╚══██╔══╝██╔══██╗██╔════╝    ╚══██╔══╝██╔═══██╗██╔════╝
+        ██║ █╗ ██║█████╗  ██║     ██║     ██║   ██║██╔████╔██║█████╗      ██║██╔██╗ ██║       ██║   ██║██║            ██║   ███████║██║            ██║   ██║   ██║█████╗  
+        ██║███╗██║██╔══╝  ██║     ██║     ██║   ██║██║╚██╔╝██║██╔══╝      ██║██║╚██╗██║       ██║   ██║██║            ██║   ██╔══██║██║            ██║   ██║   ██║██╔══╝  
+        ╚███╔███╔╝███████╗███████╗╚██████╗╚██████╔╝██║ ╚═╝ ██║███████╗    ██║██║ ╚████║       ██║   ██║╚██████╗       ██║   ██║  ██║╚██████╗       ██║   ╚██████╔╝███████╗
+         ╚══╝╚══╝ ╚══════╝╚══════╝ ╚═════╝ ╚═════╝ ╚═╝     ╚═╝╚══════╝    ╚═╝╚═╝  ╚═══╝       ╚═╝   ╚═╝ ╚═════╝       ╚═╝   ╚═╝  ╚═╝ ╚═════╝       ╚═╝    ╚═════╝ ╚══════╝
+           
+           ASCII
+        puts "\n\n"
         print "Joueur 1, veuillez entrer votre prénom : "
-        player1_name = gets.chomp
+        @players = []
+        @players = [Player.new(gets, "X")]
         print "Joueur 2, veuillez entrer votre prénom : "
-        player2_name = gets.chomp
-        @players = [Player.new(player1_name, "X"), Player.new(player2_name, "O")]
+        @players = [Player.new(gets.chomp, "O")]
         @current_player = @players.first
         @status = "on going"
         @board = board
@@ -57,19 +69,23 @@ class Game
  end
 
     def play_turn
-        @current_player = @turns_played.even? ? "X" : "O"
+        @current_player = @turns_played.even? ? @players[0] : @players[1]
 
-        puts "#Joueur #{@current_player}, c'est ton tour."
+        puts "#Joueur #{@current_player.name}, c'est ton tour."
         puts "Saisis une case (e.g., A1, B2, C3):"
         position = gets.chomp.upcase
         
-    
+        unless position.match?(/\A[ABC][1-3]\z/)
+        puts "Erreur : Entrée invalide. Veuillez entrer une case valide (e.g., A1, B2, C3)."
+        play_turn
+        end
+        
         unless free_position?(position)
           puts "La case est déjà occupée, veuillez réessayer"
           play_turn
         end
     
-        fill_position(position, @current_player)
+        fill_position(position, @current_player.symbol)
     
         if victory?
           @status = @current_player

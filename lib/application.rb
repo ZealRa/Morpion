@@ -12,7 +12,7 @@ class Application
      board = Board.new
      game = Game.new(board)
      show = Show.new
-     while game.status == "on going"
+     until game.victory?
       show.show_board(board)
        game.play_turn
      end  
